@@ -1,10 +1,12 @@
 import React, {Component, useState} from 'react';
-import {Button, TextInput, Modal, View, Text, StyleSheet, TouchableOpacity, Image, SafeAreaView, Linking, FlatList, ScrollView,Alert} from 'react-native';
+import {TextInput, Modal, View, Text, StyleSheet, TouchableOpacity, Image, SafeAreaView, Linking, FlatList, ScrollView} from 'react-native';
 
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'; // width, height
-import{Menu, MenuOption, MenuOptions,MenuTrigger, MenuProvider} from 'react-native-popup-menu';
+import{Menu, MenuOptions,MenuTrigger, MenuProvider} from 'react-native-popup-menu';
 import Icon from 'react-native-vector-icons/Ionicons';
 import TreeView from 'react-native-final-tree-view';
+
+import axios from 'axios';
 
 import Cytoscape from 'cytoscape';
 import CytoscapeComponent from 'react-cytoscapejs';
@@ -15,97 +17,94 @@ Cytoscape.use(COSEBilkent);
 
 const RoadMap = (props, {navigation}) => {
 
-  const [numKey, setnumKey] = useState(0);
+  // 모달에 전달할 내용들(제목, 내용, 레벨 등)
+  const [numLevel, setnumLevel] = useState(0);
+  const [dataTitle, setdataTitle] = useState(null);
+  const [dataTexts, setdataTexts] = useState(null);
 
+  //모달 - 책 관련 변수
+  const [bookSrc, setBookSrc] = useState(null);
+  const [bookUrl, setBookUrl] = useState(null);
+  const [bookauthor, setBookauthor] = useState(null);
+  const [bookpublisher, setBookpublisher] = useState(null);
+
+  //리스트 형식과 그래프 형식 상태 변수
   const [Viewstate, setViewstate] = useState(true);
 
+  //모달 뷰 관련 변수
   const [modalVisible, setModalVisible] = useState(false);
   const [modalBooksid, setBooksid] = useState(null);
-  const [modalBooksKey, setBooksKey] = useState(null);
 
   const [secondmodalVisible, setsecondmodalVisible] = useState(false);
 
   let roadMapId = props.route.params.roadMapId;
   let roadmap = props.route.params.roadmap;
 
+  console.log(roadMapId);
+
+  const api = "KakaoAK aef53ecb905e1cbffcf4b411286c0ca0";
+
   const state = {
     triz: [
       {
         key : 0,
-        id: 'root',
-        label: 'root',
-        texts : '웹 백엔드',
+        id: 'Root',
+        title : '웹',
+        texts : '월드 와이드 웹(World Wide Web)이란 인터넷에 연결된 사용자들이 서로의 정보를 공유할 수 있는 공간을 의미합니다. 간단히 줄여서 WWW나 W3라고도 부르며, 간단히 웹(Web)이라고 가장 많이 불립니다. 인터넷과 같은 의미로 많이 사용되고 있지만, 정확히 말해 웹은 인터넷상의 인기 있는 하나의 서비스일 뿐입니다. 하지만 현재에는 인터넷과 웹이라는 단어가 서로 혼용되어 사용될 만큼 인터넷의 가장 큰 부분을 차지하고 있습니다.',
         children: [
           {
             key : 1,
-            id: 'child1',
-            label: 'child1',
-            texts : 'HTML CSS JS',
+            id: 'Trunk1',
+            title : '벡엔드',
+            texts : '백엔드는 소프트웨어 개발 프로세스에서 서버 측 개발 분야입니다. 백엔드에서는 데이터를 저장하고 관리한다',
             children: [
               {
                 key : 3,
-                id: 'stem1',
-                label: 'stem1',
-                texts : 'Jquery',
+                id: 'Branch1',
+                title : 'Node.js',
+                texts : '노드는 크로스 플랫폼의 오픈소스 런타임(run time) 환경으로써, 브라우저의 외부에서 자바스크립트 코드를 실행할 수 있게 해줍니다. 노드는 프로그래밍 언어도 아니고, 프레임워크도 아닙니다. 노드는 모바일이나 웹 어플리케이션용 API와 같은 백엔드 서비스 개발을 위해서 사용됩니다. 이미 페이팔, 우버, 월마트, 넷플릭스 등 포춘지 선정 500대 기업에서 많이들 사용하고 있죠.',
                 children: [
-
                   {
                     key : 4,
                     id: 'leaf1',
-                    label: 'leaf1',
-                    texts : 'JAVA',
-                    children: [
-                      {
-                        key : 6,
-                        id: 'stem1',
-                        label: 'stem1',
-                        texts : 'Spring',
-                      },
-                    ],
+                    title : 'NOde.js 디자인 패턴',
+                    texts : 'NOde.js 디자인 패턴',
                   },
 
                 ],
               },
               {
                 key : 2,
-                id: 'stem2',
-                label: 'stem2',
-                texts : 'GITHUB',
+                id: 'Branch2',
+                title : 'Git',
+                texts: '컴퓨터 파일의 변경사항을 추적하고 여러 명의 사용자들 간에 해당 파일들의 작업을 조율하기 위한 분산 버전 관리 시스템이다. 소프트웨어 개발에서 소스 코드 관리에 주로 사용되지만 어떠한 집합의 파일의 변경사항을 지속적으로 추적하기 위해 사용될 수 있다.',
               },
 
               {
                 key : 5,
-                id: 'stem2',
-                label: 'stem2',
-                texts : 'MySQL',
+                id: 'Branch3',
+                title : 'Javascript',
+                texts : '자바스크립트는 "동적 표현"을 하기 위한 언어이다. 모바일 메뉴를 보기 위해 햄버거 모양(三)의 아이콘을 눌렀을 때 메뉴가 나타나게 해주는 것이 자바스크립트의 역할이라고 보면 된다. 타 프로그래밍 언어에 비해 진입 장벽이 낮은 편이지만 깊이 들어갈수록 어렵다. 웹퍼블리셔는 자바스크립트로 자신이 원하는 동작을 스스로 코딩할 수 있을 정도로 마스터하는 것이 중요하다고 생각한다.',
                 children: [
                   {
                     key : 6,
-                    id: 'stem1',
-                    label: 'stem1',
-                    texts : 'MariaDB',
-                    children: [
-                      {
-                        key : 6,
-                        id: 'stem1',
-                        label: 'stem1',
-                        texts : 'REST JSON AUTH',
-                      },
-                    ],
+                    id: 'Leaf2',
+                    title : '자바스크립트 + jQuery 완전정복 스터디 3',
+                    texts : '자바스크립트 + jQuery 완전정복 스터디 3',
                   },
                 ],
               },
               {
                 key : 7,
-                id: 'stem2',
-                label: 'stem2',
-                texts : 'PHP',
+                id: 'Branch4',
+                title : 'PHP',
+                texts : '특별히 웹 애플리케이션 개발을 위해서 고안된 서버 측 스크립트 언어입니다. PHP는 서버 측에서 실행되기 때문에, 특히 서버 측 언어로서 많은 인기를 얻고 있습니다.',
                 children: [
                   {
                     key : 8,
-                    id: 'stem1',
-                    label: 'stem1',
-                    texts : 'Apache',
+                    id: 'Leaf3',
+                    title : '러닝 PHP',
+                    texts : '러닝 PHP',
                   },
                 ],
               },
@@ -124,41 +123,11 @@ const RoadMap = (props, {navigation}) => {
     { data: state.triz[0].children[0].children[0]},
     { data: state.triz[0].children[0].children[1]},
     { data: state.triz[0].children[0].children[0].children[0]},
-    { data: { source: 'root', target: 'child1', label: 'Edge from Node1 to Node2' } },
-    { data: { source: 'child1', target: 'stem1', label: 'Edge from Node1 to Node2' } },
-    { data: { source: 'child1', target: 'stem2', label: 'Edge from Node1 to Node2' } },
-    { data: { source: 'stem1', target: 'leaf1', label: 'Edge from Node1 to Node2' } },
+    { data: { source: 'Root', target: 'Trunk1', label: 'Edge from Node1 to Node2' } },
+    { data: { source: 'Trunk1', target: 'Branch1', label: 'Edge from Node1 to Node2' } },
+    { data: { source: 'Trunk1', target: 'Branch2', label: 'Edge from Node1 to Node2' } },
+    { data: { source: 'Branch1', target: 'leaf1', label: 'Edge from Node1 to Node2' } },
  ];
-
-  const [bookUrl, setBookUrl] = useState(["https://www.naver.com"]);
-  const [bookSrc, setBookSrc] = useState(["https://bookthumb-phinf.pstatic.net/cover/166/834/16683411.jpg","https://bookthumb-phinf.pstatic.net/cover/166/834/16683411.jpg","https://bookthumb-phinf.pstatic.net/cover/166/834/16683411.jpg","https://bookthumb-phinf.pstatic.net/cover/166/834/16683411.jpg","https://bookthumb-phinf.pstatic.net/cover/166/834/16683411.jpg","https://bookthumb-phinf.pstatic.net/cover/166/834/16683411.jpg","https://bookthumb-phinf.pstatic.net/cover/166/834/16683411.jpg"]);
-  const Books = [
-    {
-      id : 'root',
-      name : ['책1', '책2', '책3', '책8989' , '책8989' , '책8989' , '책8989'],
-      bookurl : ["https://www.naver.com", "https://www.naver.com", "https://www.naver.com", "https://www.naver.com","https://www.naver.com", "https://www.naver.com", "https://www.naver.com"]
-    },
-    {
-      id : 'child1',
-      name : ['책3', '책4', '책5'],
-      bookurl : ["https://www.naver.com", "https://www.naver.com", "https://www.naver.com"]
-    },
-    {
-      id : 'child2',
-      name : ['책12', '책45', '책65'],
-      bookurl : ["https://www.naver.com", "https://www.naver.com", "https://www.naver.com"]
-    },
-    {
-      id : 'stem1',
-      name : ['책09', '책80', '책07'],
-      bookurl : ["https://www.naver.com", "https://www.naver.com", "https://www.naver.com"]
-    },
-    {
-      id : 'leaf1',
-      name : ['책33', '책44', '책55'],
-      bookurl : ["https://www.naver.com", "https://www.naver.com", "https://www.naver.com"]
-    },
-  ]
   
   const getIndicator = (isExpanded, hasChildrenNodes) => {
     if (!hasChildrenNodes) {
@@ -173,31 +142,42 @@ const RoadMap = (props, {navigation}) => {
     }
   };
 
-  const renderListItem = ({item}) =>{
-    // <Text style = {styles.bookmark}>{item}</Text>
-    return (
-    <TouchableOpacity onPress ={() =>{
-      Linking.openURL(bookUrl[0])
-    }}>
-      <Image style = {styles.images} source = {{uri : bookSrc[0]}}></Image> 
-      <Text style = {styles.imageName}>{item}</Text>
-    </TouchableOpacity>
-    )}
+    //카카오 api 책정보
+  async function getBookInfo(bookarray){
+    var newSrcArray = bookSrc;
+    var newUrlArray = bookUrl;
+    var newauthor = bookauthor;
+    var newpublisher = bookpublisher;
 
-  const renderUpdateList = ({item}) =>{
-    return(
-      <View>
-          <TouchableOpacity onPress ={() =>{
-          }} style = {{alignItems : "center"}}>
-            <Image style = {styles.images} source = {{uri : bookSrc[0]}}></Image>
-          </TouchableOpacity>
-            <TextInput style = {styles.inputstyle} defaultValue={item} inputProps={{ 'aria-label': 'description' }} />
-            <TextInput style = {styles.inputstyle} defaultValue={item.bookUrl} inputProps={{ 'aria-label': 'description' }} />
-        </View>
-    )
+    try {
+      const response = await axios.get("https://dapi.kakao.com/v3/search/book?",{
+        params : {
+          sort : 'accuracy',
+          page : 1,
+          size : 1,
+          query : bookarray
+        },
+        headers: {
+          Authorization: api
+        }
+      });
+
+      let result = response.data;
+      newSrcArray = result.documents[0].thumbnail;
+      newUrlArray = result.documents[0].url;
+      newauthor = result.documents[0].authors;
+      newpublisher = result.documents[0].publisher;
+
+    } catch (error) {
+      console.error(error);
+    }
+    
+  
+    setBookSrc(newSrcArray);
+    setBookUrl(newUrlArray);
+    setBookauthor(newauthor);
+    setBookpublisher(newpublisher);
   }
-
-
 
   // 모달 수정클릭 이벤트
   const updateModalView = () => {
@@ -205,19 +185,6 @@ const RoadMap = (props, {navigation}) => {
     setsecondmodalVisible(!secondmodalVisible);
   }
 
-  // 삭제하기 확인 alert
-  const createTwoButtonAlert = () =>
-    Alert.alert(
-      "삭제하시겠습니까?",
-      [
-        {
-          text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel"
-        },
-        { text: "OK", onPress: () => console.log("OK Pressed") }
-      ]
-    );
 
   return(
     <MenuProvider>
@@ -233,8 +200,10 @@ const RoadMap = (props, {navigation}) => {
         
               {/* 뷰 형식 선택 && 더보기 */}
                 <View style = {{flexDirection : 'column', flex : 1}}>
+                  
                   <View style = {{flex : 1, flexDirection : 'row', justifyContent: 'space-between'}}>
-                    {/* 뷰 선택 */}
+                    
+                    {/* 뷰 선택 아이콘 변경 */}
                     {Viewstate ? 
                     (
                     <View style = {{flex : 1.5, justifyContent : 'center', alignItems : 'center', flexDirection : 'row'}}>
@@ -274,7 +243,7 @@ const RoadMap = (props, {navigation}) => {
                             props.navigation.navigate("ModifyRoadMap", {roadMapId : roadMapId, roadmap : roadmap})
                           }}><Text>수정</Text></TouchableOpacity></MenuOptions>
 
-                          <MenuOptions><TouchableOpacity style = {[styles.menuText]} onPress={createTwoButtonAlert}>
+                          <MenuOptions><TouchableOpacity style = {[styles.menuText]}>
                             <Text>삭제</Text>
                             </TouchableOpacity></MenuOptions>
                           </MenuOptions>
@@ -284,7 +253,7 @@ const RoadMap = (props, {navigation}) => {
                   
                 </View>
 
-              {/* 로드맵 줄 */}
+              {/* 로드맵 줄 - 리스트와 그래프 */}
                 
               <View style = {styles.scrolls}>
 
@@ -306,23 +275,29 @@ const RoadMap = (props, {navigation}) => {
                                 fontSize: 15,
                                 color : "black",
                               }}>
-                              {getIndicator(isExpanded, hasChildrenNodes)} {node.texts}
+                              {getIndicator(isExpanded, hasChildrenNodes)} {node.title}
                             </Text>
                           </View>
                         )
                       }}
 
+                      // 리스트 노드를 길게 눌렀을 때 발생하는 이벤트들
                       onNodeLongPress={({node, level})=> {
-                        setBooksKey(node.key);
-                        setBooksid(node.id);
-                        setModalVisible(true);
+                        setBooksid(node.id); // 클릭한 적이 있는지 없는지
+                        setnumLevel(level);  // 해당 노드의 레벨 확인(4인경우 다른 뷰)
+                        setdataTitle(node.title); // 노드의 제목
+                        setdataTexts(node.texts); // 노드의 내용
+                        setModalVisible(true); // 모달을 보여주기 위한 설정
+                        if(level === 3){
+                          getBookInfo(node.title);
+                        }
                       }}
                     />
                     ) 
                     : 
                     (
                       // 그래프 형식
-                      <CytoscapeComponent stylesheet={[
+                    <CytoscapeComponent stylesheet={[
                         {
                           selector: 'node',
                           style: {
@@ -357,6 +332,7 @@ const RoadMap = (props, {navigation}) => {
                       setModalVisible(!modalVisible)
                     }}
                   >
+
                     <View style={styles.centeredView}>
                       <View style={styles.modalView}>
                         {modalBooksid ?
@@ -365,14 +341,60 @@ const RoadMap = (props, {navigation}) => {
                             <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
                               <Icon name='close'size={20} color="#0067A3"></Icon>
                             </TouchableOpacity>
-                            <Text style = {{fontSize : 18, fontWeight : 'bold', alignSelf : "center"}}>{Books[modalBooksKey].id}</Text>
-                            <ScrollView horizontal = {true}>
-                              <FlatList
-                                data={Books[modalBooksKey].name}
-                                numColumns={3}
-                                renderItem={renderListItem}
-                              />
+                            <Text style = {{fontSize : 18, fontWeight : 'bold', alignSelf : "center"}}>{dataTitle}</Text>
+                            
+                            {/* Leaf일때만 책 가져오고 나머지는 글가져오기 */}
+                            <ScrollView horizontal = {false} style = {styles.modalTextStyle}>
+                              { numLevel === 3 ?
+                                (
+                                  <View>
+                                    <View style={styles.bookmodalstyle}>
+                                      <View style = {{flex : 1}}>
+                                        <TouchableOpacity  onPress ={() =>{
+                                          Linking.openURL(bookUrl)
+                                        }}>
+                                        <Image style = {styles.image} source = {{uri : bookSrc}}></Image> 
+                                        </TouchableOpacity>
+                                      </View>
+
+                                      <View style = {styles.booksDataStyle}>
+                                        <Text>{dataTitle}</Text>
+                                        <Text>저자 : {bookauthor}</Text>
+                                        <Text>출판사 : {bookpublisher}</Text>
+                                      </View>
+                                    </View>
+
+                                    <Text style = {styles.Texts}>Comment</Text>
+                                    <View style = {styles.insertcomment}>
+                                      <TextInput style = {styles.comment}>
+                                      </TextInput>
+                                      <TouchableOpacity style = {{flex : 1, justifyContent : 'center', alignItems : 'center', backgroundColor : 'white', borderColor : 'gray', borderWidth : 1,borderRadius : 10, marginLeft : 5}}>
+                                        <Text style = {styles.insert}>▷</Text>
+                                      </TouchableOpacity>
+                                  </View>
+                                </View>
+                                ) 
+                                :
+                                (
+                                  <View>
+                                  <View>
+                                    <Text style = {styles.modalTitleStyle}>{dataTexts}</Text>
+                                  </View>
+
+                                  <Text style = {styles.Texts}>Comment</Text>
+                                  <View style = {styles.insertcomment}>
+                                      <TextInput style = {styles.comment}>
+                                      </TextInput>
+                                      <TouchableOpacity style = {{flex : 1, justifyContent : 'center', alignItems : 'center', backgroundColor : 'white', borderColor : 'gray', borderWidth : 1,borderRadius : 10, marginLeft : 5}}>
+                                        <Text style = {styles.insert}>▷</Text>
+                                      </TouchableOpacity>
+                                  </View>
+
+                                  </View>
+                                )
+                              }
                             </ScrollView>
+    
                           </View>
                           
                         )
@@ -403,7 +425,7 @@ const RoadMap = (props, {navigation}) => {
                   </Modal>
 
 
-                  {/* 수정하기 두번째 modal */}
+                  {/* 수정하기 두번째 modal(모달) */}
                   <Modal
                     animationType="fade"
                     transparent={true}
@@ -414,20 +436,57 @@ const RoadMap = (props, {navigation}) => {
                   >
                     <View style={styles.centeredView}>
                       <View style={styles.modalView}>
+
                         {modalBooksid ?
                         (
                           <View style = {{height : hp("30%"), marginTop: 10, marginBottom : 10}}>
+
                             <TouchableOpacity onPress={() => updateModalView()}>
                               <Icon name='close'size={20} color="#0067A3"></Icon>
                             </TouchableOpacity>
-                            <TextInput style = {styles.inputstyle} defaultValue={Books[modalBooksKey].id} inputProps={{ 'aria-label': 'description' }} />
-                            <ScrollView horizontal = {true}>
-                              <FlatList
-                                data={Books[modalBooksKey].name}
-                                numColumns={3}
-                                renderItem={renderUpdateList}
-                              />
-                            </ScrollView>
+                            <TextInput style = {[styles.inputstyle]} defaultValue={dataTitle} inputProps={{ 'aria-label': 'description' }} />
+                          
+                            <ScrollView horizontal = {false} style = {styles.modalTextStyle}>
+
+                            { numLevel === 3 ?
+                              (<View>
+                                
+                                  <View style={styles.bookmodalstyle}>
+                                    <View style = {{flex : 1}}>
+                                      <TouchableOpacity  onPress ={() =>{
+                                        Linking.openURL(bookUrl)
+                                      }}>
+                                      <Image style = {styles.image} source = {{uri : bookSrc}}></Image> 
+                                      </TouchableOpacity>
+                                    </View>
+
+                                    <View style = {styles.booksDataStyle}>
+                                      <Text>{dataTitle}</Text>
+                                      <Text>저자 : {bookauthor}</Text>
+                                      <Text>출판사 : {bookpublisher}</Text>
+                                    </View>
+                                  </View>
+
+                                  <Text style = {styles.Texts}>Comment</Text>
+                                  <View style = {styles.insertcomment}>
+                                    <TextInput style = {styles.comment}>
+                                    </TextInput>
+                                    <TouchableOpacity style = {{flex : 1, justifyContent : 'center', alignItems : 'center', backgroundColor : 'white', borderColor : 'gray', borderWidth : 1,borderRadius : 10, marginLeft : 5}}>
+                                      <Text style = {styles.insert}>▷</Text>
+                                    </TouchableOpacity>
+                                  </View>
+
+                              </View>
+                              ) 
+                              :
+                              (
+                                <View>
+                                  <TextInput style = {[styles.inputareastyle]} multiline defaultValue={dataTexts} inputProps={{ 'aria-label': 'description' }} />
+                                </View>
+                              )
+                            }
+                            </ScrollView> 
+
                           </View>
                         )
                         :
@@ -451,14 +510,9 @@ const RoadMap = (props, {navigation}) => {
                       </View>
                     </View>
                   </Modal>
-              </View>  
               
+              </View>  
             </View>
-
-                {/* 수정하기 */}
-                <Text>
-                    어떻게 나오는지 확인하기 위한 텍스트
-                </Text>
           </View>
 
         </View>
@@ -502,6 +556,10 @@ const styles = StyleSheet.create({
     marginBottom : 10,
     marginTop : 10
   },
+  modalTitleStyle : {
+    marginTop : 10,
+    marginBottom : 10
+  },
   button: {
     borderRadius: 20,
     padding: 10,
@@ -514,17 +572,6 @@ const styles = StyleSheet.create({
   buttonClose: {
     backgroundColor: "#f95965",
   },
-  image:{
-    marginTop: 20 ,
-    marginBottom : 20,
-    marginLeft: 25,
-    width: 50,
-    height: 50,
-  },
-  EditItems : {
-    justifyContent : "space-between",
-    flexDirection : "row",
-  },
   top : {
     flex : 1,
   },
@@ -532,7 +579,6 @@ const styles = StyleSheet.create({
     flex : 9, 
     justifyContent : 'center', 
     alignItems : 'center',
-
   },
   centeredView: {
     flex: 1,
@@ -544,7 +590,7 @@ const styles = StyleSheet.create({
     margin: 10,
     backgroundColor: "white",
     borderRadius: 20,
-    paddingBottom : 80,
+    paddingBottom : 50,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
@@ -570,13 +616,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
-  images : {
-    height : 150,
-    width : 90,
-    margin : 10,
-    borderColor : 'lightgray',
-    borderWidth : 1
-  },
   imageName : {
     fontSize : 15,
     fontWeight : 'normal',
@@ -593,18 +632,67 @@ const styles = StyleSheet.create({
     borderWidth : 1
   },
   inputstyle : {
-    fontSize : 15,
+    fontSize : 20,
     fontWeight : 'normal',
     textAlign : 'center',
-    borderColor : "#696969",
-    borderWidth : 1
+    borderColor : "lightgray",
+    borderWidth : 2,
+    marginTop : 10,
+    marginBottom : 10,
+    borderRadius : 10
+  },
+  inputareastyle : {
+    fontSize : 15,
+    textAlign : 'center',
+    borderColor : "lightgray",
+    borderWidth : 2,
+    marginTop : 10,
+    marginBottom : 10,
+    borderRadius : 10
   },
   menuText : {
     fontSize : 12,
     marginTop : 2,
     marginBottom : 2,
     marginLeft : 5
-  }
+  },
+  //모달 책 관련
+  modalTextStyle : {
+    width : hp("40%")
+  },
+  image : {
+    height : 150,
+    width : 100,
+    margin : 10,
+    borderColor : 'lightgray',
+    borderWidth : 2
+  },
+  booksDataStyle : {
+    flex : 1, 
+    marginTop : 10, 
+    justifyContent : 'space-between',
+  },
+  bookmodalstyle : {
+    flexDirection: 'row',
+    justifyContent : 'space-between',
+    marginTop : 10,
+  },
+  // 코멘트 관련
+  insertcomment : {
+    margin : 10,
+    flexDirection : 'row',
+    flex : 1,
+  },
+  comment : {
+    height : 30,
+    borderColor : 'gray',
+    borderWidth : 1,
+    borderRadius : 10,
+    flex : 6
+  },
+  insert : {
+    fontSize : 20,
+  },
 });
 
 export default RoadMap;
