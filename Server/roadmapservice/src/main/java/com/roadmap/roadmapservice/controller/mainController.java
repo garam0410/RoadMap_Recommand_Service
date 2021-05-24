@@ -1,5 +1,6 @@
 package com.roadmap.roadmapservice.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,7 @@ import com.roadmap.roadmapservice.dto.UserDto;
 //REST 서비스를 제공하기 위한 컨트롤러를 지정하는 어노테이션
 @RestController
 public class mainController {
-	
+
 	public String result = "";
 	
 	@Autowired
@@ -24,8 +25,12 @@ public class mainController {
 	//GET 요청을 받기 위한 Mapping 어노테이션(PostMapping, DeleteMapping, PutMapping 이 있음.)
 	
 	@GetMapping(path = "/test")
-	public String test() {
-		return "success";
+	public String[][] test() {
+		
+		String arr[][] = {{"a1","b1","c1","d1","e1","f1","g1","h1","i1","j1","k1"},{"a2","b1","c1","d1","e1","f1","g1","h1","i1","j1","k1"},{"a3","b1","c1","d1","e1","f1","g1","h1","i1","j1","k1"},
+		{"a4","b1","c1","d1","e1","f1","g1","h1","i1","j1","k1"},{"a5","b1","c1","d1","e1","f1","g1","h1","i1","j1","k1"}};
+		
+		return arr;
 	}
 	
 	// 회원가임

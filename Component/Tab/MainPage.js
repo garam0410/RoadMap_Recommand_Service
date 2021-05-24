@@ -20,6 +20,11 @@ const MainPage = (props,{navigation}) => {
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
+  const [sort, setSort] = useState([['a1','b','c','d','e','f','g','h','i','j','k'],['a2','b','c','d','e','f','g','h','i','j','k'],
+      ['a3','b','c','d','e','f','g','h','i','j','k'],['a4','b','c','d','e','f','g','h','i','j','k'],['a5','b','c','d','e','f','g','h','i','j','k']])
+
+  // const [sort,setSort] = useState();
+
   // const userId = props.route.params.userId;
   var [bookName, setBookName] = useState(["-", "-", "-", "-", "-"]);
   const [bookSrc, setBookSrc] = useState(["-","-","-","-","-"]);
@@ -41,6 +46,7 @@ const MainPage = (props,{navigation}) => {
   if(getbook == "0"){
     if (ip != null){
       checkUserInterest();
+      getinterest();
       getTopBook();
       getTopRoadmap();
       getloveroadmap();
@@ -49,10 +55,33 @@ const MainPage = (props,{navigation}) => {
     }
   }
 
+  // 분야항목 가져오기
+  async function getinterest(){
+    try {
+      const response = await axios.get("http://172.20.10.6:8000/test",{
+
+      });
+
+      const result = response.data;
+
+      var newInterestArray = [];
+
+      for(let i = 0; i<5; i++){
+        newInterestArray.push(result[i]);
+      }
+
+      setSort(newInterestArray);
+      console.log(newInterestArray);
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   // 흥미분야 검사
   async function checkUserInterest(){
     try{
-      const response = await axios.get("http://192.168.35.115:8000/checkuserinterest",{
+      const response = await axios.get("http://172.20.10.6:8000/checkuserinterest",{
         params : {
           userId : userId
         }
@@ -194,6 +223,17 @@ const MainPage = (props,{navigation}) => {
     }
   }
 
+  // 흥미분야 탐색 컴포넌트
+  const interestList = sort[cnt-1].map((sort, index) => 
+  (              
+    <TouchableOpacity key = {index} style = {styles.interestThing} onPress = {() => {
+      alert(sort);
+    }}>
+      <Text style = {styles.interestText}>{sort}</Text>
+    </TouchableOpacity>
+  )
+  );
+
   const modalHeader = (
     <View style = {styles.modalHeader}>
       <View style = {styles.headerView}>
@@ -207,7 +247,7 @@ const MainPage = (props,{navigation}) => {
   const modalBody=(
     <View style = {styles.modalBody}>
       <View style = {styles.bodyView}>
-
+        {interestList}
       </View>
     </View>
   )
@@ -548,8 +588,8 @@ const styles = StyleSheet.create({
     paddingHorizontal:10
   },
   bodyView : {
-    height : "60%",
-    width : 200,
+    height : "100%",
+    width : "100%",
   },
   modalFooter : {
   },
@@ -558,6 +598,18 @@ const styles = StyleSheet.create({
     height:1,
     backgroundColor:"lightgray"
   },
+  interestThing : {
+    backgroundColor : 'lightblue',
+    borderRadius : 10,
+    marginBottom : 10,
+  },
+  interestText : {
+    fontWeight : 'bold',
+    fontSize : 23,
+    color : 'white',
+    margin : 10,
+    textAlign : 'center',
+  }
 });
 
 export default MainPage;
