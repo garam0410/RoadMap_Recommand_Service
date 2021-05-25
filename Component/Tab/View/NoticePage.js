@@ -1,5 +1,6 @@
 import React, {Component, useState} from 'react';
 import {View, Text, ScrollView, StyleSheet, TouchableOpacity, Dimensions, SafeAreaView, FlatList, Image, Button} from 'react-native';
+import {SearchBar} from 'react-native-elements';
 import{Menu, MenuOption, MenuOptions,MenuTrigger, MenuProvider} from 'react-native-popup-menu';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
@@ -12,6 +13,12 @@ const NoticePage = (props, {navigation}) => {
   const userId = props.route.params.userId;
   console.log(userId);
   let [bid, setBid] = useState([]);
+  const [query, setQuery] = useState("");
+
+    //검색상황 반영
+  const updateQuery = (query) => {
+    setQuery(query);
+  }
 
   // App.js ip 받아오기
   const [ip,setIp] = useState();
@@ -42,12 +49,16 @@ const NoticePage = (props, {navigation}) => {
 
 
   const boardlist = ({index})=>( 
-      <TouchableOpacity style = {styles.commentArea}>
+      <TouchableOpacity style = {styles.commentArea}
+            onPress= {()=> {
+            props.navigation.navigate("boardContent", {userId : userId});
+            }}>
         <View style = {styles.imageandname}>
         <Text style = {styles.buser}>{btitle[index]}</Text>
         </View>
         <Text style = {styles.btitle}>{buser[index]}</Text>
         <Text style = {styles.buid}>{bdate[index]}</Text>
+
       </TouchableOpacity>
     );
 
@@ -55,35 +66,41 @@ const NoticePage = (props, {navigation}) => {
         // 문단 순서대로 게시판 이름, 글 작성 버튼, 검색 이미지, FlatList(게시글 목록)
       <MenuProvider>
         <SafeAreaView style ={styles.container}>
-          <View style = {{flexDirection : 'row', justifyContent : 'space-between', margin : 10,}}>
-          <View style = {{flex : 1, margin : 10}}>  
-          <View style = {{flexDirection : 'row', justifyContent : 'space-between'}}>
-            <Text style = {{fontSize : 30, fontWeight : 'bold'}} >{noticeName}</Text>
-          </View> 
-          </View>
 
-          <View style = {{flexDirection : 'row', justifyContent : 'space-between', margin : 10,}}>
-            <TouchableOpacity style = {styles.mindMapArea} onPress = {() =>{
-              
-              props.navigation.navigate("글쓰기", {userId : userId});
-            }}>                
-                    <Text style={{ fontSize: 20, color: '#fff' }}>작성</Text>
-                    <Text style = {styles.rankName}>글 작성</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style = {styles.mindMapArea} onPress = {() =>alert('글 검색')
-              }>
-                <Image style = {styles.userimage} source = {require('../../img/search.png')}></Image>
+                {/* 검색, 글쓰기 버튼 */}
+            <View style = {styles.buttonArea}>
+                 {/* 검색 버튼 */}
+              <TouchableOpacity style = {styles.mindMapArea} onPress = {() => {
+              props.navigation.navigate("boardSearch", {userId : userId});
+            }}>
+              <SearchBar
+                  lightTheme = 'true'
+                  round = "true"
+                  onChangeText = {updateQuery}
+                  value = {query}
+                  autoFocus = {false}
+                  platform = "ios"
+                  containerStyle = {{flex : 4, backgroundColor : 'white', width: '75%', height : 'auto', borderWidth : 1, borderRadius : 10, borderColor : 'gray'}}
+                  // 컨테이너 스타일은 수정해야 함
+                  inputContainerStyle = {{backgroundColor : 'white', height : 20}}>
+              </SearchBar>
+                {/* <Image style = {styles.userimage} source = {require('../../img/search.png')}></Image> */}
                 </TouchableOpacity>
+
+               {/* 글쓰기 버튼 */}
+              <TouchableOpacity style = {styles.button} onPress = {() =>{
+                props.navigation.navigate("boardWriting", {userId : userId});
+              }}>                
+              <Text style = {styles.buttonText}>글쓰기</Text>
+              </TouchableOpacity>
             </View>
-          </View>
 
             <View style = {{margin : 10, flexDirection : 'row', flex : 1,}}>
          <FlatList 
-                         data={btitle}
-                         extraData={buser}
-                         keyExtractor={bdata => bdata.id}
-                         renderItem={boardlist} //이거 없어도 됨?
+            data={btitle}
+            extraData={buser}
+            keyExtractor={bdata => bdata.id}
+            renderItem={boardlist}
          />
          </View>
       </SafeAreaView>
@@ -117,6 +134,25 @@ buser : {
   fontWeight : 'bold',
   marginLeft : 10,
 },
+buttonArea : {
+  flexDirection : 'row',
+  padding : 10,
+},
+
+button : {
+  flex : 1,
+  borderRadius : 20,
+  backgroundColor : 'skyblue',
+  padding : 10,
+},
+
+buttonText : {
+  textAlign : 'center',
+  color : 'white',
+  fontWeight : 'bold',
+  fontSize : 20,
+},
+
 /*userimage : {
   height : hp('4%'),
   width : wp('9%'),

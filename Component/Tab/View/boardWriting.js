@@ -31,7 +31,6 @@ const boardWriting = (props, {navigation}) => {
               </TextInput>
             </View>
 
-            {/* 타이틀 아래 구분선 */}
             <View style = {styles.line}></View>
 
             {/* 게시글 내용 */}
@@ -42,7 +41,6 @@ const boardWriting = (props, {navigation}) => {
                 value = {text}
                 onChangeText = {text => setText(text)}
                 multiline = {true}>
-
               </TextInput>
             </View>
             

@@ -20,6 +20,10 @@ import bookinfo from "../Tab/View/bookinfo";
 import MyLoadmap from "../Tab/View/MyLoadmap";
 import SearchPage from "../Tab/View/SearchPage";
 import boardWriting from "../Tab/View/boardWriting";
+import boardContent from "../Tab/View/boardContent";
+import boardSearch from "../Tab/View/boardSearch";
+
+
 
 const TabStack = createBottomTabNavigator();
 const SignUpStack = createStackNavigator();
@@ -67,7 +71,10 @@ const NoticeListStackScreen = ({userId, ip}) => {
             <MainStack.Screen name = "SearchPage" component = {SearchPage}/>
             <MainStack.Screen name = "MyLoadmap" component = {MyLoadmap}/>
             <MainStack.Screen name = "RoadMapSocial" component = {RoadMapSocial}/>
-            <MainStack.Screen name = "글쓰기" component = {boardWriting}/>
+            <MainStack.Screen name = "boardWriting" component = {boardWriting}/>
+            <MainStack.Screen name = "boardContent" component = {boardContent}/>
+            <MainStack.Screen name = "boardSearch" component = {boardSearch}/>
+
         </NoticeListStack.Navigator>
     );
 }
