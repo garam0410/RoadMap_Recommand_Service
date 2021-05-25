@@ -5,6 +5,7 @@ import axios from 'axios';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {SearchBar} from 'react-native-elements';
 import AsyncStorage from '@react-native-community/async-storage';
+import {RadioButton} from 'react-native-paper';
 
 const MainPage = (props,{navigation}) => {
 
@@ -23,7 +24,11 @@ const MainPage = (props,{navigation}) => {
   const [sort, setSort] = useState([['a1','b','c','d','e','f','g','h','i','j','k'],['a2','b','c','d','e','f','g','h','i','j','k'],
       ['a3','b','c','d','e','f','g','h','i','j','k'],['a4','b','c','d','e','f','g','h','i','j','k'],['a5','b','c','d','e','f','g','h','i','j','k']])
 
-  // const [sort,setSort] = useState();
+  // 선택 값 받기
+  const [value, setValue] = useState('');
+  
+  // 선택 값 모음
+  const [valueArray, setValueArray] = useState([]);
 
   // const userId = props.route.params.userId;
   var [bookName, setBookName] = useState(["-", "-", "-", "-", "-"]);
@@ -227,9 +232,11 @@ const MainPage = (props,{navigation}) => {
   const interestList = sort[cnt-1].map((sort, index) => 
   (              
     <TouchableOpacity key = {index} style = {styles.interestThing} onPress = {() => {
-      alert(sort);
+      setValue(sort);
     }}>
-      <Text style = {styles.interestText}>{sort}</Text>
+      <RadioButton value = {sort}>
+      </RadioButton>
+        <Text style = {styles.interestText}>{sort}</Text>
     </TouchableOpacity>
   )
   );
@@ -247,7 +254,9 @@ const MainPage = (props,{navigation}) => {
   const modalBody=(
     <View style = {styles.modalBody}>
       <View style = {styles.bodyView}>
-        {interestList}
+        <RadioButton.Group  value = {value}>
+          {interestList}
+        </RadioButton.Group>
       </View>
     </View>
   )
@@ -265,6 +274,7 @@ const MainPage = (props,{navigation}) => {
           else if(foot == "완료"){
             setModalVisible(!modalVisible);
           }
+          valueArray.push(value);
         }}
       >
         <Text style = {{textAlign : 'center', fontWeight : 'bold', color : 'white', fontSize : 30, padding : 10}}>{foot}</Text>
@@ -602,6 +612,7 @@ const styles = StyleSheet.create({
     backgroundColor : 'lightblue',
     borderRadius : 10,
     marginBottom : 10,
+    flexDirection : 'row',
   },
   interestText : {
     fontWeight : 'bold',
