@@ -90,8 +90,6 @@ const RoadMapSocial = (props, {navigation}) => {
   //로드맵 정보 받아오기
   async function getRoadmapInfo(){
     try{
-
-
       const response = await axios.get("http://"+ip+":8083/getroadmapinfo",{
         params : {
           rid : roadMapId
@@ -193,7 +191,7 @@ const RoadMapSocial = (props, {navigation}) => {
 
   //댓글 삭제 함수
   async function delectComment(){
-    const response = await axios.get("http://"+ip+":8082/deletecomment",{
+     const response = await axios.get("http://"+ip+":8082/deletecomment",{
       params : {
         uid : user[moddifyindex],
         udate : date[moddifyindex]
@@ -219,7 +217,7 @@ const RoadMapSocial = (props, {navigation}) => {
   }
 
   //입력된 댓글을 저장하는 state
-  let [inputText, setInputText] = useState([""]);
+  let [inputText, setInputText] = useState("");
 
   //댓글 등록
   const handleCommentButtonPress = () =>{
@@ -440,7 +438,7 @@ const RoadMapSocial = (props, {navigation}) => {
               </View>
 
               <View style = {styles.insertcomment}>
-                <TextInput style = {styles.comment} onChangeText = {
+                <TextInput style = {styles.comment} value = {inputText} onChangeText = {
                   (inputText) => setInputText(inputText) 
                 }>
                 </TextInput>
