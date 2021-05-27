@@ -43,4 +43,40 @@
     <select id = "getUid" parameterType = "String" resultType = "String">
     	SELECT UID FROM USERINFO WHERE USERID = #{uid}
     </select>
+    
+    <select id = "getBoardList" parameterType = "String" resultType = "boardDto">
+    	SELECT BOARDLIST.BID, BOARDLIST.UID, USERINFO.USERID, BOARDLIST.BTITLE, BOARDLIST.BDATE FROM BOARDLIST,USERINFO WHERE BTYPE = #{btype} AND BOARDLIST.UID = USERINFO.UID ORDER BY BOARDLIST.BID DESC
+    </select>
+    
+    <select id = "getBoardText" parameterType = "String" resultType = "String">
+    	SELECT BTEXT FROM BOARDLIST WHERE BID = #{bid}
+    </select>
+    
+    <select id = "getBoardComment" parameterType = "String" resultType = "boardDto">
+    	SELECT USERINFO.USERID, BOARDCOMMENT.UID, BOARDCOMMENT.BCOMMENT, BOARDCOMMENT.CDATE FROM BOARDCOMMENT,USERINFO WHERE BID = #{bid} AND USERINFO.UID = BOARDCOMMENT.UID
+    </select>
+    
+    <delete id = "deleteBoardComment" parameterType = "commentDto">
+    	DELETE FROM BOARDCOMMENT WHERE UID = #{uid} AND CDATE = #{cdate}
+    </delete>
+    
+    <insert id = "insertBoardComment" parameterType = "commentDto">
+    	INSERT INTO BOARDCOMMENT(BID, UID, BCOMMENT, CDATE) values (#{bid}, #{uid}, #{bcomment}, #{cdate}) 
+    </insert>
+    
+    <update id="modifyBoard" parameterType = "BoardDto">
+    	UPDATE BOARDLIST SET BTITLE = #{btitle}, BTEXT = #{btext} WHERE BID = #{bid};
+    </update>
+    
+    <insert id = "insertBoard" parameterType = "BoardDto">
+    	INSERT INTO BOARDLIST(UID,BTYPE,BTITLE,BTEXT,BDATE) VALUES (#{uid},#{btype},#{btitle},#{btext},#{bdate})
+    </insert>
+    
+    <delete id = "deleteBoardCommentAll" parameterType = "String">
+    	DELETE FROM BOARDCOMMENT WHERE BID = #{bid}
+    </delete>
+    
+    <delete id = "deleteBoard" parameterType = "String">
+    	DELETE FROM BOARDLIST WHERE BID = #{bid}
+    </delete>
 </mapper>

@@ -3,8 +3,34 @@ package com.roadmap.board.dto;
 public class CommentDto {
 	private int rid;
 	private String uid;
+	private String bid;
+	private String bcomment;
 	private String ucomment;
 	private String udate;
+	private String cdate;
+	
+	public void setBcomment(String bcomment) {
+		this.bcomment = bcomment;
+	}
+	
+	public String getBcomment() {
+		return bcomment;
+	}
+	
+	public void setBid(String bid) {
+		this.bid = bid;
+	}
+	
+	public String getBid() {
+		return bid;
+	}
+	
+	public void setCdate(String cdate) {
+		this.cdate = cdate;
+	}
+	public String getCdate() {
+		return cdate;
+	}
 	
 	public void setUid(String uid) {
 		this.uid = uid;

@@ -23,4 +23,22 @@ public interface BoardMapper {
 	public void deleteLove(BoardDto boardDto);
 	
 	public String getUid(String uid);
+
+	public List<BoardDto> getBoardList(String btype);
+	
+	public String getBoardText(String bid);
+	
+	public List<BoardDto> getBoardComment(String bid);
+	
+	public void deleteBoardComment(CommentDto commentDto);
+	
+	public void insertBoardComment(CommentDto commentDto);
+	
+	public void modifyBoard(BoardDto boardDto);
+	
+	public void insertBoard(BoardDto boardDto);
+	
+	public void deleteBoard(String bid);
+	
+	public void deleteBoardCommentAll(String bid);
 }
