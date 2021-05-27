@@ -1,18 +1,27 @@
-import React, {Component, useState} from 'react';
-import {View, Text, ScrollView, StyleSheet, TouchableOpacity, Dimensions, SafeAreaView, FlatList, Image, Button} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, StyleSheet, TouchableOpacity, SafeAreaView, FlatList} from 'react-native';
 import {SearchBar} from 'react-native-elements';
-import{Menu, MenuOption, MenuOptions,MenuTrigger, MenuProvider} from 'react-native-popup-menu';
-import Icon from 'react-native-vector-icons/Ionicons';
+import{MenuProvider} from 'react-native-popup-menu';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import AsyncStorage from '@react-native-community/async-storage';
+import axios from 'axios';
 
 
 const NoticePage = (props, {navigation}) => {
 
+  useEffect(() => {
+    // Subscribe for the focus Listener
+    const unsubscribe = props.navigation.addListener('focus', () => {
+      getNotice();
+    });
+    return()=> {
+      unsubscribe;
+    };
+  }, [navigation]);
+
   let noticeName = props.route.params.noticeName;
   const userId = props.route.params.userId;
-  console.log(userId);
-  let [bid, setBid] = useState([]);
+  
   const [query, setQuery] = useState("");
 
     //검색상황 반영
@@ -25,33 +34,68 @@ const NoticePage = (props, {navigation}) => {
   AsyncStorage.getItem("ip").then((value) => {
     setIp(value);
   });
+  let [bid, setBid] = useState([]);
+  let [btitle, setBtitle] = useState([]);
+  let [bdate, setBdate] = useState([]);
+  let [buid, setBuid] = useState([]);
+  let [buser, setBUser] = useState([]);
 
-  //let [bindex, setBindex] = useState(["1","1","1","1","1","1","1","1","1"]);
-  let [btitle, setBtitle] = useState(["타이틀1","타이틀2","타이틀3","타이틀4","타이틀5","타이틀6","타이틀7","타이틀8"]);
-  let [bdate, setBdate] = useState(["2021-02-23 14:57", "2021-02-23 14:57", "2021-02-23 14:57", "2021-02-23 14:57", "2021-02-23 14:57", "2021-02-23 14:57", "2021-02-23 14:57", "2021-02-23 14:57"]);
-  let [buid, setBuid] = useState(["1","1","1","1","1","1","1","1","1"]);
-  let [buser, setBUser] = useState(["익명1", "익명2", "익명3", "익명4", "익명5", "익명6", "익명7", "익명8"]);
+  let [getdata,setGetData] = useState(["0"]);
 
-  const renderData = ({item}) => (
-    <View style={{flexDirection: "row",
-    justifyContent: "center",
-    margin: 15,
-  }}>
-    <TouchableOpacity>
-      <View style={{justifyContent: "center", alignItems: "center"}}>
-      <View style={{width:60}}>
-        <Text style={{textAlign: "center"}}>{item.game}</Text>
-        </View>
-        </View>
-    </TouchableOpacity>
-    </View>
-); //이거 없어도 됨
+  if(getdata == "0"){
+    if(ip != null){
+      getNotice()
+      setGetData("1");
+    }
+  }
+  
+  async function getNotice(){
 
+    if(noticeName == "자유게시판"){
+      noticeName = "jayu";
+    }
+    else if (noticeName == "조언방"){
+      noticeName = "joun";
+    }
+    else if (noticeName == "토론방"){
+      noticeName = "toron";
+    }
+    else if (noticeName == "질문방"){
+      noticeName = "jilmun";
+    }
+
+    var newBidArray = [];
+    var newBtitleArray = [];
+    var newBdateArrray = [];
+    var newBuserArray = [];
+    var newBuidArray = [];
+
+    const response = await axios.get("http://172.20.10.6:8000/getboardlist",{
+      params : {
+        btype : noticeName
+      }
+    });
+
+    let result = response.data;
+
+    for(let i = 0; i<result.length; i++){
+      newBidArray.push(result[i].bid);
+      newBtitleArray.push(result[i].btitle);
+      newBdateArrray.push(result[i].bDate);
+      newBuserArray.push(result[i].userid);
+      newBuidArray.push(result[i].uid);
+    }
+    setBid(newBidArray);
+    setBtitle(newBtitleArray)
+    setBdate(newBdateArrray);
+    setBUser(newBuserArray);
+    setBuid(newBuidArray);
+  }
 
   const boardlist = ({index})=>( 
-      <TouchableOpacity style = {styles.commentArea}
+      <TouchableOpacity key={index} style = {styles.commentArea}
             onPress= {()=> {
-            props.navigation.navigate("boardContent", {userId : userId});
+            props.navigation.navigate("boardContent", {userId : userId, bid : bid[index], buid : buid[index], buser : buser[index], bdate : bdate[index], btitle : btitle[index]});
             }}>
         <View style = {styles.imageandname}>
         <Text style = {styles.buser}>{btitle[index]}</Text>
@@ -89,12 +133,12 @@ const NoticePage = (props, {navigation}) => {
 
                {/* 글쓰기 버튼 */}
               <TouchableOpacity style = {styles.button} onPress = {() =>{
-                props.navigation.navigate("boardWriting", {userId : userId});
+                props.navigation.navigate("boardWriting", {userId : userId, noticeName : noticeName});
               }}>                
               <Text style = {styles.buttonText}>글쓰기</Text>
               </TouchableOpacity>
             </View>
-
+            <View style = {styles.line}></View>
             <View style = {{margin : 10, flexDirection : 'row', flex : 1,}}>
          <FlatList 
             data={btitle}
@@ -180,7 +224,12 @@ userimage : {
   height : hp('4%'),
   width : wp('9%'),
 },
-
+line : {
+  borderColor : 'lightgray',
+  borderWidth : 1,
+  marginLeft : 10,
+  marginRight : 10,
+},
 });
 
 export default NoticePage;

@@ -4,12 +4,24 @@ import{Menu, MenuOption, MenuOptions,MenuTrigger, MenuProvider} from 'react-nati
 import Icon from 'react-native-vector-icons/Ionicons';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import AsyncStorage from '@react-native-community/async-storage';
+import axios from 'axios';
+import { StackActions } from '@react-navigation/routers';
 
 const boardWriting = (props, {navigation}) => {
 
     //서버에 보낼 내용
     let userId = props.route.params.userId;
+    let btitle = props.route.params.btitle;
+    let btext = props.route.params.btext;
+    let bid = props.route.params.bid;
+    let noticeName = props.route.params.noticeName;
+
+    console.log(noticeName);
+
+    const [title,setTitle] = useState("");
     const [text,setText] = useState("");  
+
+    const [button, setButton] = useState("");
 
       // App.js ip 받아오기
   const [ip,setIp] = useState();
@@ -17,7 +29,65 @@ const boardWriting = (props, {navigation}) => {
     setIp(value);
   });
 
-  console.log(userId);
+  let [getdata,setGetData] = useState(["0"]);
+
+  if(getdata == "0"){
+    if(ip != null){
+      setTitle(btitle);
+      setText(btext);
+
+      if(noticeName == null){
+        setButton("수정");
+      }
+      else{
+        setButton("작성");
+      }
+
+      setGetData("1");
+    }
+  }
+
+  // 게시글 수정
+  async function modifyBoard(){
+    const response = await axios.get("http:/172.20.10.6:8000/modifyboard", {
+      params : {
+        bid : bid,
+        btitle : title,
+        btext : text
+      }
+    })
+  }
+
+  //게시글 작성
+  async function insertBoard(){
+
+    if(noticeName == "자유게시판"){
+      noticeName = "jayu";
+    }
+    else if (noticeName == "조언방"){
+      noticeName = "joun";
+    }
+    else if (noticeName == "토론방"){
+      noticeName = "toron";
+    }
+    else if (noticeName == "질문방"){
+      noticeName = "jilmun";
+    }
+
+    var currentTime = new Date();
+
+    var time = currentTime.toLocaleString();
+
+    const response = await axios.get("http://172.20.10.6:8000/insertboard",{
+      params : {
+        btype : noticeName,
+        uid : userId,
+        btitle : title,
+        btext : text,
+        bdate : time.toString()
+      }
+    })
+  }
 
     return(
       <SafeAreaView style={styles.container}>
@@ -27,7 +97,9 @@ const boardWriting = (props, {navigation}) => {
             {/* 타이틀 */}
             <View style = {styles.titleArea}>
               <TextInput style = {styles.titleView}
-              placeholder={"제목"}>
+              placeholder={"제목"}
+              value = {title}
+              onChangeText = {title => setTitle(title)}>
               </TextInput>
             </View>
 
@@ -50,15 +122,26 @@ const boardWriting = (props, {navigation}) => {
               <View style = {{flex : 1}}/>
 
               <TouchableOpacity style = {styles.button}
-                onPress = {() =>alert('글 작성 취소')}>
+                onPress = {() =>{
+                  props.navigation.goBack();
+                }}>
                 <Text style = {styles.buttonText}>취소</Text>
               </TouchableOpacity>
 
               <View style = {{flex : 1}}/>
 
               <TouchableOpacity style = {styles.button}
-                onPress = {() =>alert('글 작성 완료')}>
-                <Text style = {styles.buttonText}>작성</Text>
+                onPress = {() =>{
+                  if(button == "수정"){
+                    modifyBoard();
+                    props.navigation.goBack();
+                  }
+                  else{
+                    insertBoard();
+                    props.navigation.goBack();
+                  }
+                }}>
+                <Text style = {styles.buttonText}>{button}</Text>
               </TouchableOpacity>
 
               <View style = {{flex : 1}}/>
