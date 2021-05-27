@@ -63,7 +63,7 @@ const MainPage = (props,{navigation}) => {
   // 분야항목 가져오기
   async function getinterest(){
     try {
-      const response = await axios.get("http://172.20.10.6:8000/test",{
+      const response = await axios.get("http://"+ip+":8080/test",{
 
       });
 
@@ -86,7 +86,7 @@ const MainPage = (props,{navigation}) => {
   // 흥미분야 검사
   async function checkUserInterest(){
     try{
-      const response = await axios.get("http://172.20.10.6:8000/checkuserinterest",{
+      const response = await axios.get("http://"+ip+":8080/checkuserinterest",{
         params : {
           userId : userId
         }
