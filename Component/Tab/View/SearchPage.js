@@ -21,6 +21,8 @@ const SearchPage = (props, {navigation}) => {
   const [rid, setRid] = useState([]);
   const [uid, setUid] = useState([]);
 
+  const [rank, setRank] = useState(["인공지능","빅데이터","풀스택","백엔드","게임","머신러닝","데브옵스","자바","파이썬","데이터베이스",]);
+
   const [query, setQuery] = useState("");
 
   //검색상황 반영
@@ -32,7 +34,7 @@ const SearchPage = (props, {navigation}) => {
       Alert.alert("결과 없음","검색결과가 없습니다.");
   }
 
-  async function searchRoadmap(){
+  async function searchRoadmap(query){
     
     setLoading(true);
 
@@ -67,9 +69,17 @@ const SearchPage = (props, {navigation}) => {
       setUid(newUidArray);
       setRname(newRnameArray);
     }
-
-    
   }
+
+  const rankList = rank.map((rank, index) =>(
+    <TouchableOpacity key = {index} onPress = {() =>{
+      setQuery(rank);
+      searchRoadmap(rank);
+    }}>
+        <Text style = {styles.rankname}>{index+1}.  {rank}</Text>
+      </TouchableOpacity>
+    )
+  );
 
     // 검색결과 로드맵 컴포넌트
     const RoadmapList = rid.map((rid, index) =>(
@@ -105,20 +115,31 @@ const SearchPage = (props, {navigation}) => {
               round = "true"
               onChangeText = {updateQuery}
               value = {query}
-              autoFocus = {true}
+              autoFocus = {false}
               platform = "ios"
+              onClear = {() => {
+                
+              }}
               containerStyle = {{flex : 4, backgroundColor : 'white', height : 'auto', borderWidth : 1, borderRadius : 10, borderColor : 'gray'}}
               inputContainerStyle = {{backgroundColor : 'white', height : 20}}>
           </SearchBar>
 
           <TouchableOpacity style = {{flex : 1, alignContent : 'center', justifyContent : 'center', borderColor : 'black', borderWidth : 1, borderRadius : 10, marginLeft : 10}}
-            onPress = {searchRoadmap}>
+            onPress = {() => {searchRoadmap(query)}}>
             <Text style = {{fontSize : 20, fontWeight : 'bold', justifyContent : 'center', textAlign : 'center'}}>검색</Text>
           </TouchableOpacity>
         </View>
 
         <ScrollView style = {{flex : 1}}>
-          {RoadmapList}
+          {
+            query.length == 0
+            ? (
+              <View style = {styles.roadMapRankArea}>
+                {rankList}
+              </View>
+            )
+            : RoadmapList
+          }
         </ScrollView>
 
       </SafeAreaView>
@@ -154,6 +175,17 @@ const styles = StyleSheet.create({
   roadmapName : {
     fontSize : 20,
     fontWeight : 'bold',
+  },
+  roadMapRankArea : {
+    borderRadius : 10, 
+    borderWidth : 4, 
+    borderColor : 'gray',
+    margin : 10
+  },
+  rankname : {
+    fontWeight : 'bold',
+    fontSize : 30,
+    padding : 5,
   },
   });
 
