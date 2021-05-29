@@ -49,7 +49,7 @@ const boardWriting = (props, {navigation}) => {
 
   // 게시글 수정
   async function modifyBoard(){
-    const response = await axios.get("http:/172.20.10.6:8000/modifyboard", {
+    const response = await axios.get("http:/"+ip+":8082/modifyboard", {
       params : {
         bid : bid,
         btitle : title,
@@ -78,7 +78,7 @@ const boardWriting = (props, {navigation}) => {
 
     var time = currentTime.toLocaleString();
 
-    const response = await axios.get("http://172.20.10.6:8000/insertboard",{
+    const response = await axios.get("http://"+ip+":8082/insertboard",{
       params : {
         btype : noticeName,
         uid : userId,

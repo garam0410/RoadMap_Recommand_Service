@@ -70,7 +70,7 @@ const NoticePage = (props, {navigation}) => {
     var newBuserArray = [];
     var newBuidArray = [];
 
-    const response = await axios.get("http://172.20.10.6:8000/getboardlist",{
+    const response = await axios.get("http://"+ip+":8082/getboardlist",{
       params : {
         btype : noticeName
       }

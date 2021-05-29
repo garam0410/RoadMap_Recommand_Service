@@ -77,7 +77,7 @@ const boardContent = (props, {navigation}) => {
 
   //게시글 내용 가져오기
   async function getBoardText(){
-    const response = await axios.get("http://172.20.10.6:8000/getboardtext",{
+    const response = await axios.get("http://"+ip+":8082/getboardtext",{
       params : {
         bid : bid
       }
@@ -94,7 +94,7 @@ const boardContent = (props, {navigation}) => {
     var newUserCommentArray = []
     var newDateArray = []
 
-    const response = await axios.get("http://172.20.10.6:8000/getboardcomment",{
+    const response = await axios.get("http://"+ip+":8082/getboardcomment",{
       params : {
         bid : bid
       }
@@ -115,7 +115,7 @@ const boardContent = (props, {navigation}) => {
 
   //댓글 삭제 함수
   async function delectComment(){
-    const response = await axios.get("http://172.20.10.6:8000/deleteboardcomment",{
+    const response = await axios.get("http://"+ip+":8082/deleteboardcomment",{
       params : {
         uid : cuser[moddifyindex],
         udate : date[moddifyindex]
@@ -143,7 +143,7 @@ const boardContent = (props, {navigation}) => {
   //댓글 저장
   async function insertComment(uid, text, date){
     try{
-      const response = await axios.get("http://172.20.10.6:8000/insertboardcomment",{
+      const response = await axios.get("http://"+ip+":8082/insertboardcomment",{
         params : {
           bid : bid,
           uid : uid,
@@ -176,7 +176,7 @@ const boardContent = (props, {navigation}) => {
   }
 
   async function deleteBoard(){
-    const response = await axios.get("http://172.20.10.6:8000/deleteboard",{
+    const response = await axios.get("http://"+ip+":8082/deleteboard",{
       params : {
         bid : bid
       }
