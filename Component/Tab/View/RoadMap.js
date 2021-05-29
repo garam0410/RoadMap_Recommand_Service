@@ -8,13 +8,6 @@ import TreeView from 'react-native-final-tree-view';
 
 import axios from 'axios';
 
-import Cytoscape from 'cytoscape';
-import CytoscapeComponent from 'react-cytoscapejs';
-import COSEBilkent from 'cytoscape-cose-bilkent';
-
-Cytoscape.use(COSEBilkent);
-
-
 const RoadMap = (props, {navigation}) => {
 
   // 모달에 전달할 내용들(제목, 내용, 레벨 등)
@@ -294,33 +287,11 @@ const RoadMap = (props, {navigation}) => {
                       }}
                     />
                     ) 
-                    : 
-                    (
-                      // 그래프 형식
-                    <CytoscapeComponent stylesheet={[
-                        {
-                          selector: 'node',
-                          style: {
-                            width: 20,
-                            height: 20,
-                          }
-                        },
-                        
-                        {
-                          selector: 'edge',
-                          style: {
-                            width: 3
-                          }
-                        }
-                      ]}  
-                      elements={data} 
-                      minZoom={0.5} maxZoom={5} 
-                      style={ { width : wp("80%"), height : hp("80%"), } } 
-                      layout = {{
-                        name: 'cose-bilkent',
-                      }}
-                      />
-                    )}
+                  :(
+                    <View style = {{height : "100%", width : "100%"}}>
+
+                    </View>
+                  )}
                   
 
                   {/* Modal 모달 부분 */}
@@ -371,7 +342,7 @@ const RoadMap = (props, {navigation}) => {
                                       <TouchableOpacity style = {{flex : 1, justifyContent : 'center', alignItems : 'center', backgroundColor : 'white', borderColor : 'gray', borderWidth : 1,borderRadius : 10, marginLeft : 5}}>
                                         <Text style = {styles.insert}>▷</Text>
                                       </TouchableOpacity>
-                                  </View>
+                                  </View>d
                                 </View>
                                 ) 
                                 :
@@ -533,11 +504,12 @@ const styles = StyleSheet.create({
     alignItems : "center",
   },
   roadview : {
-    height : hp("85%"),
-    width : wp("90%"),
+    height : hp("70%"),
+    width : wp("95%"),
     backgroundColor : "#BFC8D7",
     elevation : 3,
-    margin : 5
+    margin : 5,
+    borderRadius : 10
   },
   EditView : {
     flex: 1,
@@ -549,12 +521,13 @@ const styles = StyleSheet.create({
     marginTop : 5,
     flexDirection : "row",
     alignItems : "center",
-    paddingHorizontal : 10
+    paddingHorizontal : 10,
   },
   Texts : {
     fontSize : 20,
     marginBottom : 10,
-    marginTop : 10
+    marginTop : 10,
+    fontWeight : 'bold'
   },
   modalTitleStyle : {
     marginTop : 10,
@@ -584,6 +557,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     marginTop: 30,
+    
   },
   modalView: {
     flexDirection : "column",
