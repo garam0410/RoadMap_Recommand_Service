@@ -26,4 +26,8 @@
     <select id = "getSearchRoadmap" parameterType = "String" resultType = "hashmap">
     	SELECT UID, RID, RNAME FROM ROADMAPLIST WHERE RNAME LIKE #{query}
     </select>
+    
+    <select id = "getRoadmapDetail" parameterType = "String" resultType = "roadmapDetailDto">
+    	SELECT * FROM ROADMAPINFO WHERE RID = #{rid}
+    </select>
 </mapper>

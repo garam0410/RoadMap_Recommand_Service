@@ -3,13 +3,16 @@ package com.roadmap.roadmapinfo.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.roadmap.roadmapinfo.dao.UserMapper;
+import com.roadmap.roadmapinfo.dto.RoadmapDetailDto;
 import com.roadmap.roadmapinfo.dto.RoadmapDto;
 
+@CrossOrigin(origins = "http://192.168.25.6:9000")
 @RestController
 public class mainController {
 	
@@ -21,7 +24,38 @@ public class mainController {
 	
 	@GetMapping(path = "/test")
 	public String test() {
-		return "success";
+		return "["
+				+ "    {"
+				+ "        \"data\": { \"id\": \"a\" ,\"label\" : \"hello\"}, \"renderedPosition\" : {\"x\" : \"100\", \"y\" : \"100\"}"
+				+ "    },"
+				+ "    {"
+				+ "        \"data\": { \"id\": \"b\", \"label\": \"world\" }"
+				+ "    },"
+				+ "    {"
+				+ "        \"data\": { \"id\": \"ab\", \"source\": \"a\", \"target\": \"b\" }"
+				+ "    },"
+				+ "]";
+	}
+	
+	//로드맵 상세 정보 가져오기
+	@GetMapping(path = "/getroadmapdetail")
+	public String getRoadmapDetail(@RequestParam String rid){
+		try{
+			RoadmapDetailDto roadmapDetailDto = new RoadmapDetailDto();
+			roadmapDetailDto.setRid(rid);
+			
+			List<RoadmapDetailDto> list = uMapper.getRoadmapDetail(roadmapDetailDto);
+			
+			// 변경 클래스로 이동
+			SetTypeClass setTypeClass = new SetTypeClass(list);
+			
+			// 타입 바꿔서 전송
+			return setTypeClass.send();
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	// 로드맵 작성자 아이디 리턴

@@ -2,6 +2,7 @@ package com.roadmap.roadmapinfo.dao;
 
 import java.util.List;
 
+import com.roadmap.roadmapinfo.dto.RoadmapDetailDto;
 import com.roadmap.roadmapinfo.dto.RoadmapDto;
 
 public interface UserMapper {
@@ -14,4 +15,6 @@ public interface UserMapper {
 	public String getUserId(int uid);
 
 	public List<RoadmapDto> getSearchRoadmap(String query);
+	
+	public List<RoadmapDetailDto> getRoadmapDetail(RoadmapDetailDto roadmapDetailDto);
 }
