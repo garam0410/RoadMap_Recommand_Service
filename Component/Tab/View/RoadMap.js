@@ -1,6 +1,6 @@
 import React, {Component, useState} from 'react';
 import {TextInput, Modal, View, Text, StyleSheet, TouchableOpacity, Image, SafeAreaView, Linking, FlatList, ScrollView} from 'react-native';
-
+import {WebView} from 'react-native-webview';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'; // width, height
 import{Menu, MenuOptions,MenuTrigger, MenuProvider} from 'react-native-popup-menu';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -32,6 +32,8 @@ const RoadMap = (props, {navigation}) => {
 
   let roadMapId = props.route.params.roadMapId;
   let roadmap = props.route.params.roadmap;
+
+  let uri = "http://172.20.10.6:9000?rid="+roadMapId;
 
   console.log(roadMapId);
 
@@ -289,7 +291,8 @@ const RoadMap = (props, {navigation}) => {
                     ) 
                   :(
                     <View style = {{height : "100%", width : "100%"}}>
-
+                      <WebView source ={{uri : uri}}>
+                      </WebView>
                     </View>
                   )}
                   
@@ -506,7 +509,7 @@ const styles = StyleSheet.create({
   roadview : {
     height : hp("70%"),
     width : wp("95%"),
-    backgroundColor : "#BFC8D7",
+    borderWidth : 1,
     elevation : 3,
     margin : 5,
     borderRadius : 10
