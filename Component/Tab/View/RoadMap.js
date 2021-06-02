@@ -33,7 +33,7 @@ const RoadMap = (props, {navigation}) => {
   let roadMapId = props.route.params.roadMapId;
   let roadmap = props.route.params.roadmap;
 
-  let uri = "http://172.20.10.6:9000?rid="+roadMapId;
+  let uri = "http://172.20.10.6:3000/roadmap?rid="+roadMapId;
 
   console.log(roadMapId);
 
