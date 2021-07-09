@@ -32,24 +32,40 @@ https://www.youtube.com/watch?v=3czgZVfoo84
 ## 수행 내용
 ### 클라우드 컴퓨팅 Linux 환경에서 Docker 컨테이너를 활용한 서비스 구성
 - GCP의 1년 무료 크레딧을 활용하여 서버를 구축하고, 기능별로 분류된 서비스 4가지를 컨테이너로 구성하여 MSA 환경을 구성함
+  ![image](https://user-images.githubusercontent.com/28921379/125035013-4164b000-e0cc-11eb-9945-96b3f8bda827.png)
+
 
 <br>
 
 ### Spring Boot를 활용한 백엔드 개발
-- 로그인, 회원가입, 회원 탈퇴
-- 게시판 :  댓글, 게시글, 좋아요의 추가,수정,삭제
+- 로그인, 회원가입, 회원 탈퇴 **login(), register(), checkOut()**
+- 댓글 **insertComment(), deletecomment()**
+- 게시글
+
+  **getBoardList(), insertBoard(), deleteBoard(), modifyBoard(), getBoardComment, insertBoardComment(), deleteBoardComment()**
+- 좋아요의 수정,삭제 **deleteLove(), saveLove()**
+- 로드맵을 검색 및 좋아요 표시한 로드맵 가져오기 **getSearchRoadamp() ,getLikeRoadamp()**
 - 로드맵 : 로드맵을 표현할 수 있는 형태로 데이터 정제
-- 로드맵을 검색할 수 있는 검색기능
+
+  ![image](https://user-images.githubusercontent.com/28921379/125034893-1f6b2d80-e0cc-11eb-92a8-d1f1ab2d3494.png)
+
+  데이터베이스에서 추출한 특정 로드맵 데이터를 Cytoscape.js 에 적용할 수 있는 형태로 데이터를 바꿔주는 기능 구현
 
 <br>
 
 ### React Native 및 React의 Axios 라이브러리를 활용한 서버와의 비동기 통신 구현
+  
 - 서버로 부터 응답 받은 JSON 데이터를 어플리케이션에 적용
+  
+  ![image](https://user-images.githubusercontent.com/28921379/125034816-06627c80-e0cc-11eb-8461-b0ca1f1db976.png)
 
 <br>
 
 ### 데이터베이스 셜계
+
 - 프로젝트를 진행하면서 사용할 데이터베이스를 구축하고 설계하였다. 
+
+  ![image](https://user-images.githubusercontent.com/28921379/125038779-c782f580-e0d0-11eb-9791-a5c8dc96a4db.png)
 
 <br>
 
